@@ -1,9 +1,144 @@
-import React from "react";
+import axios from "axios";
+import { extractColors } from "extract-colors";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import ProgressBar from "../components/progress/ProgressBar";
 
 function PokemonDetail() {
   const { name } = useParams();
-  return <div>PokemonDetail {name}</div>;
+
+  const [pokemonDetail, setPokemonDetail] = useState({});
+
+  const getRecursiveEvolution = useCallback(
+    (evolutionChain, level, evolutionData) => {
+      if (!evolutionChain.evolves_to.length) {
+        return evolutionData.push({
+          pokemon: {
+            ...evolutionChain.species,
+            url: evolutionChain.species.url.replace(
+              "pokemon-species",
+              "pokemon"
+            ),
+          },
+          level,
+        });
+      }
+      evolutionData.push({
+        pokemon: {
+          ...evolutionChain.species,
+          url: evolutionChain.species.url.replace("pokemon-species", "pokemon"),
+        },
+        level,
+      });
+      return getRecursiveEvolution(
+        evolutionChain.evolves_to[0],
+        level + 1,
+        evolutionData
+      );
+    },
+    []
+  );
+
+  const getEvolutionData = useCallback(
+    (evolutionChain) => {
+      const evolutionData = [];
+      getRecursiveEvolution(evolutionChain, 1, evolutionData);
+      return evolutionData;
+    },
+    [getRecursiveEvolution]
+  );
+
+  const getPokemonInfo = useCallback(async () => {
+    const { data } = await axios.get(
+      `https://pokeapi.co/api/v2/pokemon/${name}`
+    );
+    const { data: dataEncounters } = await axios.get(
+      data.location_area_encounters
+    );
+
+    const {
+      data: {
+        evolution_chain: { url: evolutionURL },
+      },
+    } = await axios.get(`https://pokeapi.co/api/v2/pokemon-species/${name}`);
+    const { data: evolutionData } = await axios.get(evolutionURL);
+
+    const pokemonAbilities = {
+      abilities: data.abilities.map(({ ability }) => ability.name),
+      moves: data.moves.map(({ move }) => move.name),
+    };
+
+    const encounters = [];
+    const evolution = getEvolutionData(evolutionData.chain);
+    let evolutionLevel;
+    evolutionLevel = evolution.find(
+      ({ pokemon }) => pokemon.name === data.name
+    ).level;
+    dataEncounters.forEach((encounter) => {
+      encounters.push(
+        encounter.location_area.name.toUpperCase().split("-").join(" ")
+      );
+    });
+    const stats = await data.stats.map(({ stat, base_stat }) => ({
+      name: stat.name,
+      value: base_stat,
+    }));
+    // dispatch(
+    setPokemonDetail({
+      id: data.id,
+      name: data.name,
+      avatar: data.sprites.other.dream_world.front_default,
+      types: data.types.map(({ type: { name } }) => name),
+      stats,
+      encounters,
+      evolutionLevel,
+      evolution,
+      pokemonAbilities,
+    });
+    // );
+    // setIsDataLoading(false);
+  }, [name, getEvolutionData]);
+
+  useEffect(() => {
+    getPokemonInfo();
+  }, [name, getPokemonInfo]);
+
+  const pokemonName = pokemonDetail.name;
+
+  console.log(pokemonDetail.stats);
+
+  return (
+    <section className="container mx-auto px-5 py-10 flex space-x-10">
+      <div className="w-1/3 flex flex-col justify-center items-center">
+        <img
+          src={pokemonDetail.avatar}
+          width={400}
+          height={400}
+          alt={pokemonName}
+        />
+      </div>
+      <div className="w-2/3 ml-10">
+        <div className="my-5">
+          <h1 className="uppercase font-bold text-5xl">{pokemonName}</h1>
+          <h4 className="font-bold uppercase text-xl">
+            {pokemonDetail?.types?.join(" - ")}
+          </h4>
+        </div>
+
+        {/* POKEMON STATS */}
+        <div className="w-4/5">
+          {pokemonDetail.stats.map((stat, i) => {
+            return (
+              <ProgressBar key={i} label={stat.name} percent={stat.value} />
+            );
+          })}
+          <button className="mt-5 bg-sky-700 hover:bg-red-700 text-white w-60 font-bold uppercase rounded-lg shadow-lg py-2">
+            CATCH {pokemonName}
+          </button>
+        </div>
+      </div>
+    </section>
+  );
 }
 
 export default PokemonDetail;

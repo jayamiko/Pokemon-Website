@@ -9,9 +9,6 @@ function PokemonList() {
     getPokemonList(setData);
   }, []);
 
-  console.log(data);
-  console.log(data?.length);
-
   return (
     <div className="h-screen container mx-auto px-5">
       <div className="flex items-center justify-center my-10">

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 function PokemonCard({ item }) {
   const pokemonName = item?.name;
-  const pokemonAvatar = item.sprites.front_default;
+  const pokemonAvatar = item.sprites.other.dream_world.front_default;
   return (
     <Link to={`/pokemon/${pokemonName}`}>
       <div
