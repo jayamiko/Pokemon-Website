@@ -1,10 +1,9 @@
 import axios from "axios";
+import { pokemonAPI } from "../../utils/constants";
 
 export const getPokemonList = async (setData) => {
   try {
-    const response = await axios.get(
-      "https://pokeapi.co/api/v2/pokemon?limit=10"
-    );
+    const response = await axios.get(`${pokemonAPI}/pokemon?limit=20`);
     const pokemonResults = response.data.results;
 
     const pokemonDataPromises = pokemonResults.map(async (pokemon) => {
