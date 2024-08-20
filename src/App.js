@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./layouts/Navbar";
 import { lazy, Suspense } from "react";
-import LoaderPage from "./components/loadings/LoaderPage";
+import LoaderPage from "./components/loading/LoaderPage";
 
 const PokemonList = lazy(() => import("./pages/PokemonList"));
 const PokemonDetail = lazy(() => import("./pages/PokemonDetail"));

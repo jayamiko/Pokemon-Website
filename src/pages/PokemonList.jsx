@@ -1,14 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { getPokemonList } from "../api/pokemon/getPokemonList";
-import PokemonCard from "../components/cards/PokemonCard";
+import React, { useEffect } from "react";
+import PokemonCard from "../components/card/PokemonCard";
 import PokemonLogo from "../assets/pokemon.webp";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchPokemonList } from "../features/pokemon/pokemonListSlice";
+import { STATUS } from "../utils/constants";
+import LoaderPage from "../components/loading/LoaderPage";
 
 function PokemonList() {
-  const [data, setData] = useState([]);
+  const dispatch = useDispatch();
+  const pokemonList = useSelector((state) => state.pokemonList.pokemonList);
+  const status = useSelector((state) => state.pokemonList.status);
+  // const error = useSelector((state) => state.pokemon.error);
 
   useEffect(() => {
-    getPokemonList(setData);
-  }, []);
+    dispatch(fetchPokemonList());
+  }, [dispatch]);
+
+  console.log(pokemonList);
 
   return (
     <div className="h-screen container mx-auto px-5">
@@ -17,11 +25,13 @@ function PokemonList() {
       </div>
       <section className="container mx-auto py-5">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
-          {data?.map((item, i) => {
+          {pokemonList?.map((item, i) => {
             return <PokemonCard key={i} item={item} />;
           })}
         </div>
       </section>
+
+      {status === STATUS.Loading && <LoaderPage />}
     </div>
   );
 }
