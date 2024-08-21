@@ -21,8 +21,8 @@ function PokemonList() {
       <div className="flex items-center justify-center my-10">
         <img src={PokemonLogo} width={300} height={300} alt="pokemon" />
       </div>
-      <section className="container mx-auto py-5">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+      <section className="container mx-auto py-2 sm:py-3 xl:py-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
           {pokemonList?.map((item, i) => {
             return <PokemonCard key={i} item={item} />;
           })}

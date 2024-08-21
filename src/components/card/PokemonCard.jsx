@@ -8,7 +8,7 @@ function PokemonCard({ item }) {
     <Link to={`/pokemon/${pokemonName}`}>
       <div
         id={`pokemon-${pokemonName}`}
-        className="border-2 cursor-pointer overflow-hidden min-w-64 h-96 bg-light-grey flex flex-col items-center justify-center rounded-xl shadow-inner"
+        className="cursor-pointer overflow-hidden w-full h-96 bg-light-grey flex flex-col items-center justify-center rounded-xl shadow-md shadow-cyan-500"
       >
         <img src={pokemonAvatar} width={150} height={150} alt={pokemonName} />
 

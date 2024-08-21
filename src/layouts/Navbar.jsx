@@ -5,7 +5,7 @@ import PokeballIcon from "../assets/pokeball-icon.png";
 export default function Navbar() {
   return (
     <nav className="bg-sky-700 w-full h-20 flex items-center sticky top-0 z-50">
-      <div className="container mx-auto flex justify-between items-center px-5">
+      <div className="container mx-auto flex justify-between items-center px-3 md:px-5">
         <Link to="/">
           <img src={PokeballIcon} width={50} height={50} alt="pokeball" />
         </Link>

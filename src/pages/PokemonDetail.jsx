@@ -147,9 +147,9 @@ function PokemonDetail() {
   const pokemonName = pokemonDetail?.name;
 
   return (
-    <section className="container mx-auto px-5">
-      <section className="py-10 flex flex-col md:flex-row space-x-10">
-        <div className="w-full md:w-1/3 flex flex-col justify-center items-center">
+    <section className="container mx-auto px-3 md:px-5">
+      <section className="py-10 flex flex-col md:flex-row lg:space-x-20">
+        <div className="w-full md:w-1/3 lg:w-2/5 flex flex-col justify-center items-center">
           <img
             src={pokemonDetail?.avatar}
             width={400}
@@ -157,15 +157,15 @@ function PokemonDetail() {
             alt={pokemonName}
           />
         </div>
-        <div className="w-full md:w-2/3 ml-10">
-          <div className="w-4/5 flex flex-col">
-            <h1 className="uppercase font-bold text-5xl text-sky-700">
+        <div className="w-full">
+          <div className="w-full flex flex-col">
+            <h1 className="uppercase font-bold text-xl sm:text-2xl md:text-3xl xl:text-5xl text-sky-700 text-center md:text-left">
               {pokemonName}
               <span className="text-2xl italic ml-2">
                 {nickname && `(${nickname})`}
               </span>
             </h1>
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col md:flex-row justify-between items-center">
               <h4 className="font-bold uppercase text-xl">
                 {pokemonDetail?.types?.join(" - ")}
               </h4>
@@ -233,7 +233,7 @@ function PokemonDetail() {
           )}
 
           {/* POKEMON STATS */}
-          <div className="w-4/5 mt-3">
+          <div className="w-full mt-3">
             {pokemonDetail?.stats?.map((stat, i) => {
               return (
                 <ProgressBar key={i} label={stat?.name} percent={stat?.value} />
@@ -243,7 +243,9 @@ function PokemonDetail() {
             {!isHavePokemon ? (
               <div
                 className={`w-full flex ${
-                  showAlert ? "justify-between" : "justify-end"
+                  showAlert
+                    ? "justify-between"
+                    : "justify-center md:justify-end"
                 } items-center md:space-x-5`}
               >
                 {showAlert && (
@@ -259,7 +261,7 @@ function PokemonDetail() {
                     setShowAlert(true);
                   }}
                   disabled={loading}
-                  className="bg-sky-700 border-2 hover:bg-red-700 text-white w-52 font-bold capitalize rounded-lg shadow-lg py-2"
+                  className="bg-sky-600 border-2 hover:bg-sky-700 text-white w-full md:w-48 lg:w-52 font-bold capitalize rounded-lg shadow-lg py-2"
                 >
                   CATCH
                 </button>
@@ -273,7 +275,7 @@ function PokemonDetail() {
         </div>
       </section>
 
-      <section id="tab" className="mt-5">
+      <section id="tab" className="mt-3 md:mt-5">
         <VerticalTab item={pokemonDetail} />
       </section>
       {status === STATUS.Loading && <LoaderPage />}
