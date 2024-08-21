@@ -1,18 +1,18 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { pokemonAPI, STATUS } from "../../utils/constants";
+import { POKE_API, STATUS } from "../../utils/constants";
 
 export const fetchPokemonList = createAsyncThunk(
   "pokemonList/fetchPokemonList",
   async () => {
-    const response = await axios.get(`${pokemonAPI}/pokemon`);
-    const data = response.data.results;
+    const response = await axios.get(`${POKE_API}/pokemon`);
+    const data = response?.data.results;
 
     const pokemonDataPromises = data.map(async (pokemon) => {
       const pokemonDetailResponse = await axios.get(pokemon.url);
       const pokemonDetail = pokemonDetailResponse.data;
 
-      const stats = pokemonDetail.stats.map(({ stat, base_stat }) => ({
+      const stats = pokemonDetail?.stats.map(({ stat, base_stat }) => ({
         name: stat.name,
         value: base_stat,
       }));

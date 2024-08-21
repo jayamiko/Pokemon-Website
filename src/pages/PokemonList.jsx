@@ -16,8 +16,6 @@ function PokemonList() {
     dispatch(fetchPokemonList());
   }, [dispatch]);
 
-  console.log(pokemonList);
-
   return (
     <div className="h-screen container mx-auto px-5">
       <div className="flex items-center justify-center my-10">
