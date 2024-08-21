@@ -7,8 +7,10 @@ export const catchPokemon = createAsyncThunk(
   async (pokemon) => {
     const response = await axios.post(`${API_URL}/pokemon/catch`);
     const data = response.data.data;
+    const isSuccess = data.success;
+
     return {
-      success: data.success,
+      success: isSuccess,
       pokemon: {
         ...pokemon,
         nickname: "",
@@ -53,8 +55,10 @@ export const renamePokemon = createAsyncThunk(
 
     const newNickname = response.data.data["new-name"];
 
+    console.log("NEW NAME: ", newNickname);
+
     return {
-      newName: newNickname,
+      new_name: newNickname,
       rename_count: renameCount,
     };
   }
@@ -112,7 +116,8 @@ const pokemonSlice = createSlice({
     });
     builder.addCase(renamePokemon.fulfilled, (state, action) => {
       state.loading = false;
-      state.renamedPokemon = action.payload.newName;
+      state.renamedPokemon = action.payload.new_name;
+      console.log("STATE: ", state.renamedPokemon);
       state.renameCount = action.payload.rename_count;
     });
     builder.addCase(renamePokemon.rejected, (state, action) => {

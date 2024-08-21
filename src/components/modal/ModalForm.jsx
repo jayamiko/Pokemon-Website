@@ -12,7 +12,7 @@ function ModalForm({ title, showModal, setShowModal, children }) {
       backdrop="static"
       keyboard={false}
     >
-      <Modal.Header>
+      <Modal.Header closeButton>
         <Modal.Title className="capitalize font-bold text-sky-700">
           {title}
         </Modal.Title>

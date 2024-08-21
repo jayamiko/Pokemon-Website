@@ -6,6 +6,7 @@ import {
   catchPokemon,
   releasePokemon,
   renamePokemon,
+  resetSuccess,
 } from "../features/pokemon/pokemonSlice";
 import LoaderPage from "../components/loading/LoaderPage";
 import { STATUS } from "../utils/constants";
@@ -14,6 +15,7 @@ import { getPokemonDetail } from "../features/pokemon/pokemonDetailSlice";
 import { Alert } from "react-bootstrap";
 import ModalForm from "../components/modal/ModalForm";
 import NicknameForm from "../components/form/NicknameForm";
+import isPrime from "../helpers/isPrime";
 
 function PokemonDetail() {
   const { name } = useParams();
@@ -51,26 +53,20 @@ function PokemonDetail() {
       (pokemon) => pokemon.name === name
     );
 
-    const nickname = pokemonExists[0]?.nickname;
-    setNickname(nickname);
+    setNickname(pokemonExists[0]?.nickname);
 
     if (pokemonExists?.length > 0) {
       setIsHavePokemon(true);
     } else {
       setIsHavePokemon(false);
     }
-  }, [name, myPokemonList, success]);
-
-  useEffect(() => {
-    if (success) {
-      setShowModal(true);
-    }
-  }, [success]);
+  }, [name, myPokemonList]);
 
   useEffect(() => {
     if (renamedPokemon && renameCount) {
       const updatedPokemon = myPokemonList.map((pokemon) => {
         if (pokemon.name === name) {
+          setNickname(renamedPokemon);
           return {
             ...pokemon,
             nickname: renamedPokemon,
@@ -84,15 +80,6 @@ function PokemonDetail() {
     }
   }, [renamedPokemon, renameCount, myPokemonList, name]);
 
-  const isPrime = (num) => {
-    if (num <= 1) return false;
-    if (num === 2) return true;
-    for (let i = 2; i <= Math.sqrt(num); i++) {
-      if (num % i === 0) return false;
-    }
-    return true;
-  };
-
   useEffect(() => {
     if (releaseNumber) {
       if (isPrime(releaseNumber)) {
@@ -105,6 +92,12 @@ function PokemonDetail() {
       }
     }
   }, [releaseNumber, name]);
+
+  useEffect(() => {
+    if (success) {
+      setShowModal(true);
+    }
+  }, [success]);
 
   useEffect(() => {
     if (showAlert) {
@@ -142,14 +135,16 @@ function PokemonDetail() {
 
     setNicknameForm("");
     setShowModal(false);
+
+    window.location.reload();
   };
 
   const pokemonName = pokemonDetail?.name;
 
   return (
     <section className="container mx-auto px-3 md:px-5">
-      <section className="py-10 flex flex-col md:flex-row lg:space-x-20">
-        <div className="w-full md:w-1/3 lg:w-2/5 flex flex-col justify-center items-center">
+      <section className="py-10 flex flex-col sm:flex-row items-center sm:items-start lg:space-x-20">
+        <div className="w-2/5 flex flex-col justify-center items-center">
           <img
             src={pokemonDetail?.avatar}
             width={400}
@@ -157,14 +152,16 @@ function PokemonDetail() {
             alt={pokemonName}
           />
         </div>
-        <div className="w-full">
+        <div className="sm:w-3/5 sm:ml-10">
           <div className="w-full flex flex-col">
-            <h1 className="uppercase font-bold text-xl sm:text-2xl md:text-3xl xl:text-5xl text-sky-700 text-center md:text-left">
-              {pokemonName}
-              <span className="text-2xl italic ml-2">
-                {nickname && `(${nickname})`}
+            <div className="flex justify-center sm:justify-start items-end">
+              <h1 className="uppercase font-bold text-xl sm:text-2xl md:text-3xl xl:text-5xl text-sky-700">
+                {pokemonName}
+              </h1>
+              <span className="text-base sm:text-lg lg:text-xl italic ml-2 lowercase">
+                {nickname && `(nickname: ${nickname})`}
               </span>
-            </h1>
+            </div>
             <div className="flex flex-col md:flex-row justify-between items-center">
               <h4 className="font-bold uppercase text-xl">
                 {pokemonDetail?.types?.join(" - ")}
