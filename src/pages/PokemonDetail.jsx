@@ -37,7 +37,8 @@ function PokemonDetail() {
   const [showModal, setShowModal] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
 
-  const { success, loading } = useSelector((state) => state.pokemon);
+  const { success, renamedPokemon, renameCount, releaseNumber, loading } =
+    useSelector((state) => state.pokemon);
 
   useEffect(() => {
     if (name) {
@@ -58,13 +59,52 @@ function PokemonDetail() {
     } else {
       setIsHavePokemon(false);
     }
-  }, [name, myPokemonList]);
+  }, [name, myPokemonList, success]);
 
   useEffect(() => {
     if (success) {
       setShowModal(true);
     }
   }, [success]);
+
+  useEffect(() => {
+    if (renamedPokemon && renameCount) {
+      const updatedPokemon = myPokemonList.map((pokemon) => {
+        if (pokemon.name === name) {
+          return {
+            ...pokemon,
+            nickname: renamedPokemon,
+            rename_count: renameCount,
+          };
+        }
+        return pokemon;
+      });
+
+      localStorage.setItem("favorites", JSON.stringify(updatedPokemon));
+    }
+  }, [renamedPokemon, renameCount, myPokemonList, name]);
+
+  const isPrime = (num) => {
+    if (num <= 1) return false;
+    if (num === 2) return true;
+    for (let i = 2; i <= Math.sqrt(num); i++) {
+      if (num % i === 0) return false;
+    }
+    return true;
+  };
+
+  useEffect(() => {
+    if (releaseNumber) {
+      if (isPrime(releaseNumber)) {
+        const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+        const updatedFavorites = favorites.filter(
+          (pokemon) => pokemon.name !== name
+        );
+
+        localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+      }
+    }
+  }, [releaseNumber, name]);
 
   useEffect(() => {
     if (showAlert) {
@@ -156,21 +196,29 @@ function PokemonDetail() {
                 onClick={() => {
                   setShowRenameModal(true);
                 }}
-                disabled={loading}
                 className="bg-orange-500 hover:bg-orange-600 text-white w-40 font-bold capitalize rounded-md shadow-lg py-1"
               >
                 Rename
               </button>
               <ModalForm
-                title={`Rename Nickname`}
+                title="Rename Nickname"
                 showModal={showRenameModal}
                 setShowModal={setShowRenameModal}
               >
-                {/* <NicknameForm
+                <NicknameForm
                   nickname={nicknameForm}
                   setNickname={setNicknameForm}
-                  onSubmit={dispatch(renamePokemon(pokemonName, nickname))}
-                /> */}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    dispatch(
+                      renamePokemon({
+                        pokemonName: name,
+                        newName: nicknameForm,
+                      })
+                    );
+                    setShowRenameModal(false);
+                  }}
+                />
               </ModalForm>
               <button
                 onClick={() => {

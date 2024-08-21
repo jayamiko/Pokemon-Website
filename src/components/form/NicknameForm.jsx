@@ -1,6 +1,8 @@
 import React from "react";
 
 function NicknameForm({ nickname, setNickname, onSubmit }) {
+  console.log(nickname);
+
   return (
     <form className="flex justify-center items-center space-x-2">
       <span>Nickname: </span>

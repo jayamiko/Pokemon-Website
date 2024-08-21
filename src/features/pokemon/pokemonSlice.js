@@ -18,29 +18,15 @@ export const catchPokemon = createAsyncThunk(
   }
 );
 
-export const releasePokemon = createAsyncThunk(
-  "pokemon/release",
-  async (name) => {
-    const response = await axios.post(`${API_URL}/pokemon/release`);
-    const data = response.data.data;
-    const number = data.number;
+export const releasePokemon = createAsyncThunk("pokemon/release", async () => {
+  const response = await axios.post(`${API_URL}/pokemon/release`);
+  const data = response.data.data;
+  const number = data.number;
 
-    const isPrime = (num) => {
-      if (num <= 1) return false;
-      if (num === 2) return true;
-      for (let i = 2; i <= Math.sqrt(num); i++) {
-        if (num % i === 0) return false;
-      }
-      return true;
-    };
-
-    if (isPrime(number)) {
-      const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-      const updatedFavorites = favorites.filter((pokemon) => pokemon !== name);
-      localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
-    }
-  }
-);
+  return {
+    number,
+  };
+});
 
 export const renamePokemon = createAsyncThunk(
   "pokemon/rename",
@@ -54,20 +40,23 @@ export const renamePokemon = createAsyncThunk(
       return pokemon;
     });
 
-    console.log("NEW NAME: ", newName);
-
     localStorage.setItem("favorites", JSON.stringify(updatedPokemon));
 
     const renameCount = updatedPokemon.find(
       (pokemon) => pokemon.name === pokemonName
     )?.rename_count;
-    console.log("updatedRenameCount: ", renameCount);
 
     const response = await axios.post(`${API_URL}/pokemon/rename`, {
       "new-name": newName,
       "rename-count": renameCount,
     });
-    return response.data;
+
+    const newNickname = response.data.data["new-name"];
+
+    return {
+      newName: newNickname,
+      rename_count: renameCount,
+    };
   }
 );
 
@@ -77,6 +66,7 @@ const pokemonSlice = createSlice({
     success: false,
     releaseNumber: null,
     renamedPokemon: "",
+    renameCount: 0,
     loading: false,
     error: null,
   },
@@ -109,7 +99,7 @@ const pokemonSlice = createSlice({
     });
     builder.addCase(releasePokemon.fulfilled, (state, action) => {
       state.loading = false;
-      state.releaseNumber = action.payload.data.number;
+      state.releaseNumber = action.payload.number;
     });
     builder.addCase(releasePokemon.rejected, (state, action) => {
       state.loading = false;
@@ -122,7 +112,8 @@ const pokemonSlice = createSlice({
     });
     builder.addCase(renamePokemon.fulfilled, (state, action) => {
       state.loading = false;
-      state.renamedPokemon = action.payload.data["new-name"];
+      state.renamedPokemon = action.payload.newName;
+      state.renameCount = action.payload.rename_count;
     });
     builder.addCase(renamePokemon.rejected, (state, action) => {
       state.loading = false;
