@@ -6,16 +6,16 @@ import {
   catchPokemon,
   releasePokemon,
   renamePokemon,
-  resetSuccess,
 } from "../features/pokemon/pokemonSlice";
 import LoaderPage from "../components/loading/LoaderPage";
-import { STATUS } from "../utils/constants";
+import { STATUS, VARIANT } from "../utils/constants";
 import VerticalTab from "../components/tab/VerticalTab";
 import { getPokemonDetail } from "../features/pokemon/pokemonDetailSlice";
-import { Alert } from "react-bootstrap";
 import ModalForm from "../components/modal/ModalForm";
 import NicknameForm from "../components/form/NicknameForm";
 import isPrime from "../helpers/isPrime";
+import AlertNotification from "../components/alert/AlertNotification";
+import Image from "../components/image/Image";
 
 function PokemonDetail() {
   const { name } = useParams();
@@ -145,7 +145,7 @@ function PokemonDetail() {
     <section className="container mx-auto px-3 md:px-5">
       <section className="py-10 flex flex-col sm:flex-row items-center sm:items-start lg:space-x-20">
         <div className="w-2/5 flex flex-col justify-center items-center">
-          <img
+          <Image
             src={pokemonDetail?.avatar}
             width={400}
             height={400}
@@ -246,11 +246,14 @@ function PokemonDetail() {
                 } items-center md:space-x-5`}
               >
                 {showAlert && (
-                  <Alert variant={success ? "success" : "danger"}>
-                    {success
-                      ? `${pokemonName} has been successfully caught`
-                      : `Pokemon failed to catch, try another time`}
-                  </Alert>
+                  <AlertNotification
+                    text={
+                      success
+                        ? `${pokemonName} has been successfully caught`
+                        : `Pokemon failed to catch, try another time`
+                    }
+                    variant={success ? VARIANT.Success : VARIANT.Failed}
+                  />
                 )}
                 <button
                   onClick={() => {
@@ -264,9 +267,10 @@ function PokemonDetail() {
                 </button>
               </div>
             ) : (
-              <Alert variant="primary">
-                You have already caught this Pokemon
-              </Alert>
+              <AlertNotification
+                text="You have already caught this Pokemon"
+                variant={VARIANT.Info}
+              />
             )}
           </div>
         </div>

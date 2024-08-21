@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { tabList } from "../../utils/constants";
+import ItemBox from "../card/ItemBox";
 
 function VerticalTab({ item }) {
   const [activeTab, setActiveTab] = useState(tabList[0]);
@@ -28,11 +29,7 @@ function VerticalTab({ item }) {
       </ul>
       <div className="p-3 sm:p-4 xl:p-6 bg-gray-50 w-full gap-2 sm:gap-3 lg:gap-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {item[activeTab]?.map((name) => {
-          return (
-            <div className="bg-slate-200 rounded-lg lg:w-full py-2 text-black text-xs sm:text-sm md:text-base lg:text-lg font-bold flex items-center justify-center">
-              <span>{name}</span>
-            </div>
-          );
+          return <ItemBox name={name} />;
         })}
       </div>
     </div>

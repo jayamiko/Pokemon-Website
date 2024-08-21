@@ -7,6 +7,12 @@ export const STATUS = {
   Failed: "Failed",
 };
 
+export const VARIANT = {
+  Success: "success",
+  Failed: "danger",
+  Info: "primary",
+};
+
 export const TAB = {
   Moves: "moves",
   Abilities: "abilities",
