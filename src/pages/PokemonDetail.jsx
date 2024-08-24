@@ -149,14 +149,14 @@ function PokemonDetail() {
             src={pokemonDetail?.avatar}
             width={400}
             height={400}
-            alt={pokemonName}
+            alt={name}
           />
         </div>
         <div className="sm:w-3/5 sm:ml-10">
           <div className="w-full flex flex-col">
             <div className="flex justify-center sm:justify-start items-end">
               <h1 className="uppercase font-bold text-xl sm:text-2xl md:text-3xl xl:text-5xl text-sky-700">
-                {pokemonName}
+                {name}
               </h1>
               <span className="text-base sm:text-lg lg:text-xl italic ml-2 lowercase">
                 {nickname && `(nickname: ${nickname})`}

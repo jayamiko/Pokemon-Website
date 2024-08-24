@@ -21,14 +21,18 @@ export const fetchPokemonList = createAsyncThunk(
         name: pokemonDetail.name,
         id: pokemonDetail.id,
         types: pokemonDetail.types.map(({ type: { name } }) => name),
-        avatar: pokemonDetail.sprites.other.dream_world.front_default,
+        avatar: pokemonDetail.sprites.other.home.front_default,
         stats,
       };
     });
 
     const pokemonData = await Promise.all(pokemonDataPromises);
 
-    return pokemonData;
+    const randomPokemons = pokemonData.sort(() => {
+      return 0.5 - Math.random();
+    });
+
+    return randomPokemons;
   }
 );
 

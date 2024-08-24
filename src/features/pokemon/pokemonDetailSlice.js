@@ -1,11 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { POKE_API, STATUS } from "../../utils/constants";
+import lowercase from "../../helpers/lowerCase";
 
 export const getPokemonDetail = createAsyncThunk(
   "pokemon/getPokemonDetail",
   async (pokemonName) => {
-    const { data } = await axios.get(`${POKE_API}/pokemon/${pokemonName}`);
+    const { data } = await axios.get(
+      `${POKE_API}/pokemon/${lowercase(pokemonName)}`
+    );
 
     // abilities
     const pokemonAbilities = {
@@ -24,7 +27,7 @@ export const getPokemonDetail = createAsyncThunk(
       name: data.name,
       height: data.height,
       weight: data.weight,
-      avatar: data.sprites.other.dream_world.front_default,
+      avatar: data.sprites.other.home.front_default,
       types: data.types.map(({ type: { name } }) => name),
       stats,
       abilities: pokemonAbilities.abilities,

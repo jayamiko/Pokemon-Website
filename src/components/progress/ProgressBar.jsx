@@ -2,7 +2,7 @@ import React from "react";
 
 function ProgressBar({ label, percent }) {
   return (
-    <div className="flex items-center space-x-2 md:space-x-4 my-2">
+    <div className="flex items-center space-x-2 md:space-x-4 my-2 border-2 border-red-500 w-full">
       <div className="font-semibold capitalize w-2/5 text-xs sm:text-sm lg:text-base">
         {label}
       </div>

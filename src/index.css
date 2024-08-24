@@ -9,7 +9,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #eeeeee;
+  background: #fefce8;
   min-height: 100vh;
 }
 
@@ -20,4 +20,115 @@ code {
 
 .navbar-list {
   @apply flex items-center text-white font-bold hover:text-yellow-500 hover:underline text-sm sm:text-base lg:text-lg xl:text-xl;
+}
+
+.float-shadow {
+  display: inline-block;
+  position: relative;
+  transition-duration: 0.3s;
+  transition-property: transform;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transform: translateZ(0);
+}
+
+.float-shadow:before {
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+  content: "";
+  top: 100%;
+  left: 5%;
+  height: 10px;
+  width: 90%;
+  opacity: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0) 80%
+  );
+  transition-duration: 0.3s;
+  transition-property: transform, opacity;
+}
+
+.float-shadow:hover {
+  transform: translateY(-5px);
+}
+
+.float-shadow:hover:before {
+  opacity: 1;
+  transform: translateY(5px);
+}
+
+.bg-normal {
+  background-color: #a8a878;
+}
+
+.bg-fighting {
+  background-color: #c03028;
+}
+
+.bg-flying {
+  background-color: #a890f0;
+}
+
+.bg-poison {
+  background-color: #a040a0;
+}
+
+.bg-ground {
+  background-color: #e0c068;
+}
+
+.bg-rock {
+  background-color: #b8a038;
+}
+
+.bg-bug {
+  background-color: #a8b820;
+}
+
+.bg-ghost {
+  background-color: #705898;
+}
+
+.bg-steel {
+  background-color: #b8b8d0;
+}
+
+.bg-fire {
+  background-color: #f08030;
+}
+
+.bg-water {
+  background-color: #6890f0;
+}
+
+.bg-grass {
+  background-color: #78c850;
+}
+
+.bg-electric {
+  background-color: #f8d030;
+}
+
+.bg-psychic {
+  background-color: #f85888;
+}
+
+.bg-ice {
+  background-color: #98d8d8;
+}
+
+.bg-dragon {
+  background-color: #7038f8;
+}
+
+.bg-dark {
+  background-color: #705848;
+}
+
+.bg-fairy {
+  background-color: #ee99ac;
 }
