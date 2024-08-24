@@ -1,11 +1,13 @@
-import axios from "axios";
-import { POKE_API } from "../utils/constants";
 import api from ".";
+import { LIMIT_PAGINATION } from "../utils/constants";
 
-export const fetchPokemon = async () => {
+export const fetchPokemon = async (offset) => {
   try {
-    const response = await api.get(`/pokemon`);
-    return response.data.results;
+    const response = await api.get(
+      `/pokemon?limit=${LIMIT_PAGINATION}&offset=${offset}`
+    );
+    console.log(response.data.results.length);
+    return response.data;
   } catch (error) {
     console.error("error:", error);
   }

@@ -144,7 +144,7 @@ function PokemonDetail() {
   return (
     <section className="container mx-auto px-3 md:px-5">
       <section className="py-10 flex flex-col sm:flex-row items-center sm:items-start lg:space-x-20">
-        <div className="w-2/5 flex flex-col justify-center items-center">
+        <div className="lg:w-2/5 flex flex-col justify-center items-center">
           <Image
             src={pokemonDetail?.avatar}
             width={400}
@@ -152,7 +152,7 @@ function PokemonDetail() {
             alt={name}
           />
         </div>
-        <div className="sm:w-3/5 sm:ml-10">
+        <div className="w-full lg:w-3/5 lg:ml-10">
           <div className="w-full flex flex-col">
             <div className="flex justify-center sm:justify-start items-end">
               <h1 className="uppercase font-bold text-xl sm:text-2xl md:text-3xl xl:text-5xl text-sky-700">

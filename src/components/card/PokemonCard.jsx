@@ -12,6 +12,8 @@ function PokemonCard({ item }) {
     (stat) => !stat.name.includes("special")
   );
 
+  const maxStatValue = 255;
+
   const colors = ["#10B981", "#DC2626", "#3B82F6", "#EAB308"];
 
   return (
@@ -43,6 +45,7 @@ function PokemonCard({ item }) {
         <div className="w-full space-y-2 mt-4">
           {pokemonStats.map((stat, i) => {
             const color = colors[i];
+            const percentage = (stat.value / maxStatValue) * 100;
             return (
               <div key={i} className="flex items-center w-full">
                 <span className="w-2/5 font-semibold capitalize text-xs">
@@ -51,14 +54,14 @@ function PokemonCard({ item }) {
                 <div className="w-full flex h-4 rounded-lg bg-gray-700">
                   <div
                     className="h-4 rounded-lg"
-                    style={{ width: `${stat.value}%`, background: color }}
+                    style={{ width: `${percentage}%`, background: color }}
                   ></div>
                 </div>
                 <span
                   className="text-xs ml-1 font-bold"
                   style={{ color: color }}
                 >
-                  {stat.value}%
+                  {parseInt(percentage)}%
                 </span>
               </div>
             );

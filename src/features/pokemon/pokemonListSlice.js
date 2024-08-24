@@ -4,10 +4,11 @@ import { fetchPokemon, fetchPokemonDetail } from "../../api/fetchPokemon";
 
 export const fetchPokemonList = createAsyncThunk(
   "pokemonList/fetchPokemonList",
-  async () => {
-    const pokemons = await fetchPokemon();
+  async (limit, offset) => {
+    const data = await fetchPokemon(limit, offset);
+    const results = data.results;
 
-    const pokemonDataPromises = pokemons.map(async (pokemon) => {
+    const pokemonDataPromises = results.map(async (pokemon) => {
       const pokemonName = pokemon.name;
 
       const { data } = await fetchPokemonDetail(pokemonName);
@@ -32,7 +33,10 @@ export const fetchPokemonList = createAsyncThunk(
       return 0.5 - Math.random();
     });
 
-    return randomPokemons;
+    return {
+      count: data.count,
+      data: randomPokemons,
+    };
   }
 );
 

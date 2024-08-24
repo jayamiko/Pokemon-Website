@@ -14,6 +14,8 @@ export const VARIANT = {
   Info: "primary",
 };
 
+export const LIMIT_PAGINATION = 40;
+
 export const TAB = {
   Moves: "moves",
   Abilities: "abilities",
