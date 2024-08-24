@@ -7,7 +7,7 @@ import { STATUS } from "../utils/constants";
 import LoaderPage from "../components/loading/LoaderPage";
 import Image from "../components/image/Image";
 import SearchBar from "../components/input/SearchBar";
-import { getPokemonDetail } from "../features/pokemon/pokemonDetailSlice";
+import { searchPokemon } from "../service/searchPokemon";
 
 function PokemonList() {
   const dispatch = useDispatch();
@@ -27,21 +27,8 @@ function PokemonList() {
     setData(pokemonList);
   }, [pokemonList]);
 
-  async function searchPokemon(query) {
-    try {
-      const action = query ? getPokemonDetail(query) : fetchPokemonList();
-      const result = await dispatch(action);
-      const payload = result?.payload;
-
-      if (payload) {
-        setError(false);
-        setData(query ? [payload] : payload);
-      } else {
-        throw new Error(result?.error?.message || "Failed to fetch data.");
-      }
-    } catch (error) {
-      setError(error.message);
-    }
+  async function onSearch(query) {
+    searchPokemon(query, dispatch, setData, setError);
   }
 
   return (
@@ -54,7 +41,7 @@ function PokemonList() {
           query={query}
           setQuery={setQuery}
           placeHolder="Search Pokemon..."
-          onSearch={searchPokemon}
+          onSearch={onSearch}
         />
       </div>
 

@@ -1,14 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-import { POKE_API, STATUS } from "../../utils/constants";
-import lowercase from "../../helpers/lowerCase";
+import { STATUS } from "../../utils/constants";
+import { fetchPokemonDetail } from "../../api/fetchPokemon";
 
 export const getPokemonDetail = createAsyncThunk(
   "pokemon/getPokemonDetail",
   async (pokemonName) => {
-    const { data } = await axios.get(
-      `${POKE_API}/pokemon/${lowercase(pokemonName)}`
-    );
+    const { data } = await fetchPokemonDetail(pokemonName);
 
     // abilities
     const pokemonAbilities = {
@@ -40,7 +37,7 @@ const pokemonDetailSlice = createSlice({
   name: "pokemon",
   initialState: {
     pokemonData: {},
-    status: "idle",
+    status: STATUS.Idle,
     error: null,
   },
   reducers: {},

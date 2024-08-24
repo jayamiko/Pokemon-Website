@@ -1,27 +1,27 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-import { POKE_API, STATUS } from "../../utils/constants";
+import { STATUS } from "../../utils/constants";
+import { fetchPokemon, fetchPokemonDetail } from "../../api/fetchPokemon";
 
 export const fetchPokemonList = createAsyncThunk(
   "pokemonList/fetchPokemonList",
   async () => {
-    const response = await axios.get(`${POKE_API}/pokemon`);
-    const data = response?.data.results;
+    const pokemons = await fetchPokemon();
 
-    const pokemonDataPromises = data.map(async (pokemon) => {
-      const pokemonDetailResponse = await axios.get(pokemon.url);
-      const pokemonDetail = pokemonDetailResponse.data;
+    const pokemonDataPromises = pokemons.map(async (pokemon) => {
+      const pokemonName = pokemon.name;
 
-      const stats = pokemonDetail?.stats.map(({ stat, base_stat }) => ({
+      const { data } = await fetchPokemonDetail(pokemonName);
+
+      const stats = data?.stats.map(({ stat, base_stat }) => ({
         name: stat.name,
         value: base_stat,
       }));
 
       return {
-        name: pokemonDetail.name,
-        id: pokemonDetail.id,
-        types: pokemonDetail.types.map(({ type: { name } }) => name),
-        avatar: pokemonDetail.sprites.other.home.front_default,
+        id: data.id,
+        name: pokemonName,
+        types: data.types.map(({ type: { name } }) => name),
+        avatar: data.sprites.other.home.front_default,
         stats,
       };
     });
@@ -40,7 +40,7 @@ const pokemonListSlice = createSlice({
   name: "pokemonList",
   initialState: {
     pokemonList: [],
-    status: "idle",
+    status: STATUS.Idle,
     error: null,
   },
   reducers: {},
