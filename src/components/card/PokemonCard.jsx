@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Image from "../image/Image";
-import TypeLabel from "../button/ButtonType";
 import ButtonType from "../button/ButtonType";
+import { colors } from "../../utils/constants";
 
 function PokemonCard({ item }) {
   const pokemonName = item?.name;
@@ -14,8 +14,6 @@ function PokemonCard({ item }) {
   );
 
   const maxStatValue = 255;
-
-  const colors = ["#10B981", "#DC2626", "#3B82F6", "#EAB308"];
 
   return (
     <Link to={`/pokemon/${pokemonName}`}>

@@ -3,11 +3,10 @@ import PokemonLogo from "../assets/pokemon-logo.png";
 import Image from "../components/image/Image";
 import { Link } from "react-router-dom";
 import { mediaSosialLinks } from "../utils/constants";
-import { FaLinkedinIn } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="bg-sky-700 text-white py-6">
+    <footer className="bg-sky-700 text-white py-6 mt-4">
       <div className="container mx-auto px-4 flex justify-between items-center">
         <div>
           <Image src={PokemonLogo} width={350} height={350} alt="loading..." />

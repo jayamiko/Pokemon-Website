@@ -16,6 +16,7 @@ import NicknameForm from "../components/form/NicknameForm";
 import isPrime from "../helpers/isPrime";
 import AlertNotification from "../components/alert/AlertNotification";
 import Image from "../components/image/Image";
+import ButtonType from "../components/button/ButtonType";
 
 function PokemonDetail() {
   const { name } = useParams();
@@ -64,7 +65,7 @@ function PokemonDetail() {
 
   useEffect(() => {
     if (renamedPokemon && renameCount) {
-      const updatedPokemon = myPokemonList.map((pokemon) => {
+      const updatedPokemon = myPokemonList?.map((pokemon) => {
         if (pokemon.name === name) {
           setNickname(renamedPokemon);
           return {
@@ -163,9 +164,11 @@ function PokemonDetail() {
               </span>
             </div>
             <div className="flex flex-col md:flex-row justify-between items-center">
-              <h4 className="font-bold uppercase text-xl">
-                {pokemonDetail?.types?.join(" - ")}
-              </h4>
+              <div className="w-fit flex space-x-2 items-center">
+                {pokemonDetail?.types?.map((type, i) => {
+                  return <ButtonType key={i} typeName={type} disabled={true} />;
+                })}
+              </div>
               <div className="space-x-4 text-xs sm:text-sm md:text-base">
                 <span>height: {pokemonDetail.height}cm</span>
                 <span>Weight: {pokemonDetail.weight}kg</span>
@@ -233,7 +236,12 @@ function PokemonDetail() {
           <div className="w-full mt-3">
             {pokemonDetail?.stats?.map((stat, i) => {
               return (
-                <ProgressBar key={i} label={stat?.name} percent={stat?.value} />
+                <ProgressBar
+                  key={i}
+                  index={i}
+                  label={stat?.name}
+                  percent={stat?.value}
+                />
               );
             })}
 

@@ -30,6 +30,15 @@ export const TAB = {
 
 export const tabList = [TAB.Moves, TAB.Abilities];
 
+export const colors = [
+  "#10B981",
+  "#DC2626",
+  "#3B82F6",
+  "#EAB308",
+  "#e76f51",
+  "#8338ec",
+];
+
 const MEDIA_SOSIAL = {
   Linkedin: {
     link: "https://google.com/",
