@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./layouts/Navbar";
 import { lazy, Suspense } from "react";
 import LoaderPage from "./components/loading/LoaderPage";
+import Footer from "./layouts/Footer";
 
 const PokemonList = lazy(() => import("./pages/PokemonList"));
 const PokemonDetail = lazy(() => import("./pages/PokemonDetail"));
@@ -17,6 +18,7 @@ function App() {
           <Route path="/pokemon/:name" element={<PokemonDetail />} />
           <Route path="/my-pokemon-list" element={<MyPokemonList />} />
         </Routes>
+        <Footer />
       </Suspense>
     </Router>
   );

@@ -12,6 +12,8 @@ import PaginationList from "../components/input/PaginationList";
 import { getTypes } from "../features/pokemon/pokemonTypeListSlice";
 import ButtonType from "../components/button/ButtonType";
 import { fetchPokemonListType } from "../features/pokemon/pokemonListTypeSlice";
+import NotFound from "../components/alert/NotFound";
+import ErrorNotification from "../components/alert/ErrorNotification";
 
 function PokemonList() {
   const dispatch = useDispatch();
@@ -104,36 +106,41 @@ function PokemonList() {
         </div>
       </div>
 
-      <h4 className="text-center capitalize text-black font-extrabold">
-        Results for
-        <b
-          className={`bg-${activeTypeName} text-white px-2 py-1 mx-1 rounded-md`}
-        >
-          {activeTypeName}{" "}
-        </b>
-        Type:
-      </h4>
+      {activeType && !isLoading && !error && (
+        <h4 className="text-center capitalize text-black font-extrabold">
+          Results for
+          <b
+            className={`bg-${activeTypeName} text-white px-2 py-1 mx-1 rounded-md`}
+          >
+            {activeTypeName}{" "}
+          </b>
+          Type:
+        </h4>
+      )}
 
-      {!isLoading && !error && (
-        <section className="container mx-auto py-2 sm:py-3 xl:py-5">
+      <section className="container mx-auto py-2 sm:py-3 xl:py-5">
+        {!isLoading && !error && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 lg:gap-10">
             {data?.map((item, i) => {
               return <PokemonCard key={i} item={item} />;
             })}
           </div>
-        </section>
-      )}
+        )}
 
-      {isLoading && <LoaderPage />}
-      {error && (
-        <div className="border-2 border-red-500">POkemon Not Found</div>
-      )}
+        {isLoading && <LoaderPage />}
+
+        {!data?.length && !isLoading && (
+          <NotFound text="No matching pokemon results found" />
+        )}
+
+        {error && !isLoading && <ErrorNotification text={error} />}
+      </section>
 
       <br />
 
       {/* PAGINATION */}
       <div className="flex justify-end items-center">
-        {count && (
+        {count && data?.length && (
           <PaginationList
             count={count}
             currentPage={currentPage}
