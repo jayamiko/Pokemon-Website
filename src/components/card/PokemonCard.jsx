@@ -3,13 +3,14 @@ import { Link } from "react-router-dom";
 import Image from "../image/Image";
 import ButtonType from "../button/ButtonType";
 import { colors } from "../../utils/constants";
+import Ribbon from "../label/Ribbon";
 
-function PokemonCard({ item }) {
+function PokemonCard({ item, isCaught }) {
   const pokemonName = item?.name;
   const pokemoneNickname = item?.nickname;
   const pokemonAvatar = item.avatar;
   const pokemonTypes = item.types;
-  const pokemonStats = item.stats.filter(
+  const pokemonStats = item?.stats?.filter(
     (stat) => !stat.name.includes("special")
   );
 
@@ -19,30 +20,31 @@ function PokemonCard({ item }) {
     <Link to={`/pokemon/${pokemonName}`}>
       <div
         id={`pokemon-${pokemonName}`}
-        className="float-shadow cursor-pointer overflow-hidden w-full h-96 p-4 bg-sky-50 flex flex-col items-center justify-center rounded-xl shadow-2xl"
+        className="float-shadow cursor-pointer space-y-2 overflow-hidden w-full h-96 p-4 bg-sky-50 flex flex-col items-center justify-center rounded-xl shadow-2xl"
       >
-        <div className="flex flex-col justify-center items-center">
+        {isCaught && <Ribbon text="Caught" />}
+        <div className="flex flex-col justify-center items-center space-y-1">
           <Image
             src={pokemonAvatar}
             width={150}
             height={150}
             alt={pokemonName}
           />
-          <label className="font-bold text-black text-2xl text-center capitalize mt-2">
+          <label className="font-bold text-black text-2xl text-center capitalize">
             {pokemonName}
           </label>
-          {pokemoneNickname && <i>{pokemoneNickname}</i>}
+          {pokemoneNickname && <i className="text-xs">({pokemoneNickname})</i>}
 
           <div className="flex space-x-1">
-            {pokemonTypes.map((type, i) => {
+            {pokemonTypes?.map((type, i) => {
               return <ButtonType key={i} typeName={type} disabled={true} />;
             })}
           </div>
         </div>
 
         {/* STATS PROGRESS */}
-        <div className="w-full space-y-2 mt-4">
-          {pokemonStats.map((stat, i) => {
+        <div className="w-full space-y-2">
+          {pokemonStats?.map((stat, i) => {
             const color = colors[i];
             const percentage = (stat.value / maxStatValue) * 100;
             return (

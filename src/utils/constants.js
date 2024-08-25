@@ -19,6 +19,7 @@ export const VARIANT = {
   Success: "success",
   Failed: "danger",
   Info: "primary",
+  Warning: "warning",
 };
 
 export const LIMIT_PAGINATION = 40;

@@ -32,6 +32,8 @@ function PokemonList() {
   );
   const status = useSelector((state) => state.pokemonList.status);
 
+  console.log(pokemonList);
+
   const pokemonTypes = useSelector((state) => state.pokemonTypes.pokemonTypes);
   const pokemonListType = useSelector(
     (state) => state.pokemonListType.pokemonList
@@ -122,7 +124,9 @@ function PokemonList() {
         {!isLoading && !error && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 lg:gap-10">
             {data?.map((item, i) => {
-              return <PokemonCard key={i} item={item} />;
+              return (
+                <PokemonCard key={i} item={item} isCaught={item.isCaught} />
+              );
             })}
           </div>
         )}
@@ -149,12 +153,6 @@ function PokemonList() {
           />
         )}
       </div>
-
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
     </div>
   );
 }

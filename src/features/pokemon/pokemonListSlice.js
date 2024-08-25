@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { STATUS } from "../../utils/constants";
 import { fetchPokemon, fetchPokemonDetail } from "../../api/fetchPokemon";
+import sortRandomData from "../../service/sortRandomData";
 
 export const fetchPokemonList = createAsyncThunk(
   "pokemonList/fetchPokemonList",
@@ -8,8 +9,16 @@ export const fetchPokemonList = createAsyncThunk(
     const data = await fetchPokemon(limit, offset);
     const results = data.results;
 
+    const myCollections = JSON.parse(localStorage.getItem("favorites")) || [];
+
     const pokemonDataPromises = results.map(async (pokemon) => {
       const pokemonName = pokemon.name;
+
+      const pokemonNamesCaught = myCollections
+        ?.filter((collection) => collection.isCaught === true)
+        .map((pokemon) => pokemon.name);
+
+      const isCaught = pokemonNamesCaught?.includes(pokemonName);
 
       const { data } = await fetchPokemonDetail(pokemonName);
 
@@ -24,18 +33,15 @@ export const fetchPokemonList = createAsyncThunk(
         types: data.types.map(({ type: { name } }) => name),
         avatar: data.sprites.other.home.front_default,
         stats,
+        isCaught,
       };
     });
 
     const pokemonData = await Promise.all(pokemonDataPromises);
 
-    const randomPokemons = pokemonData.sort(() => {
-      return 0.5 - Math.random();
-    });
-
     return {
       count: data.count,
-      data: randomPokemons,
+      data: sortRandomData(pokemonData),
     };
   }
 );

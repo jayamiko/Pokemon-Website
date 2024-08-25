@@ -1,22 +1,41 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { API_URL } from "../../utils/constants";
+import isPrime from "../../helpers/isPrime";
 
 export const catchPokemon = createAsyncThunk(
   "pokemon/catch",
-  async (pokemon) => {
+  async ({ pokemonDetail, setCatchIsSuccess, setShowModal }) => {
     const response = await axios.post(`${API_URL}/pokemon/catch`);
     const data = response.data.data;
     const isSuccess = data.success;
 
-    return {
-      success: isSuccess,
-      pokemon: {
-        ...pokemon,
-        nickname: "",
-        rename_count: 0,
-      },
-    };
+    setCatchIsSuccess(isSuccess);
+
+    if (isSuccess) {
+      setShowModal(true); // show modal for filled nickname
+      const responseData = {
+        success: true,
+        pokemon: {
+          ...pokemonDetail,
+          isCaught: true,
+          nickname: pokemonDetail.name, //default nickname
+          rename_count: 0,
+        },
+      };
+      return responseData;
+    } else {
+      const responseData = {
+        success: false,
+        pokemon: {
+          id: pokemonDetail.id,
+          isCaught: false,
+          name: pokemonDetail.name,
+          last_attempt: new Date(),
+        },
+      };
+      return responseData;
+    }
   }
 );
 
@@ -25,8 +44,11 @@ export const releasePokemon = createAsyncThunk("pokemon/release", async () => {
   const data = response.data.data;
   const number = data.number;
 
+  const primeNumber = isPrime(number);
+
   return {
     number,
+    isPrime: primeNumber,
   };
 });
 
@@ -66,7 +88,7 @@ const pokemonSlice = createSlice({
   name: "pokemon",
   initialState: {
     success: false,
-    releaseNumber: null,
+    releaseResponse: null,
     renamedPokemon: "",
     renameCount: 0,
     loading: false,
@@ -82,13 +104,10 @@ const pokemonSlice = createSlice({
       state.loading = false;
       state.success = action.payload.success;
 
-      // if success, pokemon is saved
-      if (state.success) {
-        const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+      const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 
-        favorites.push(action.payload.pokemon);
-        localStorage.setItem("favorites", JSON.stringify(favorites));
-      }
+      favorites.push(action.payload.pokemon);
+      localStorage.setItem("favorites", JSON.stringify(favorites));
     });
     builder.addCase(catchPokemon.rejected, (state, action) => {
       state.loading = false;
@@ -101,7 +120,7 @@ const pokemonSlice = createSlice({
     });
     builder.addCase(releasePokemon.fulfilled, (state, action) => {
       state.loading = false;
-      state.releaseNumber = action.payload.number;
+      state.releaseResponse = action.payload;
     });
     builder.addCase(releasePokemon.rejected, (state, action) => {
       state.loading = false;

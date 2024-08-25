@@ -16,7 +16,6 @@ const Footer = () => {
         </div>
         <div className="flex space-x-5">
           {mediaSosialLinks.map((medsos, index) => {
-            console.log(medsos);
             return (
               <Link
                 key={index}

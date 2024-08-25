@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { LIMIT_PAGINATION, STATUS } from "../../utils/constants";
 import api from "../../api";
 import { fetchPokemonDetail } from "../../api/fetchPokemon";
+import sortRandomData from "../../service/sortRandomData";
 
 export const fetchPokemonListType = createAsyncThunk(
   "pokemonList/fetchPokemonListType",
@@ -33,12 +34,10 @@ export const fetchPokemonListType = createAsyncThunk(
 
     const pokemonData = await Promise.all(pokemonDataPromises);
 
-    const randomPokemons = pokemonData.sort(() => {
-      return 0.5 - Math.random();
-    });
+    const pokemonSlices = pokemonData.slice(offset, offset + LIMIT_PAGINATION);
 
     return {
-      pokemonList: randomPokemons.slice(offset, offset + LIMIT_PAGINATION),
+      pokemonList: sortRandomData(pokemonSlices),
     };
   }
 );
