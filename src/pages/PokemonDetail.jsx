@@ -17,6 +17,7 @@ import AlertNotification from "../components/alert/AlertNotification";
 import Image from "../components/image/Image";
 import ButtonType from "../components/button/ButtonType";
 import calculateCountdown from "../service/countdown";
+import useAutoDismissAlert from "../hook/useAutoDismissAlert";
 
 function PokemonDetail() {
   const { name } = useParams();
@@ -32,6 +33,8 @@ function PokemonDetail() {
     JSON.parse(localStorage.getItem("favorites")) || []
   );
 
+  const [pokemonExist, setPokemonExist] = useState({});
+
   const [lastAttempt, setLastAttempt] = useState(null); // session date if failed to caught
   const [timeRemaining, setTimeRemaining] = useState("");
 
@@ -41,7 +44,7 @@ function PokemonDetail() {
   const [isCaught, setIsCaught] = useState(false);
   const [catchIsSuccess, setCatchIsSuccess] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
-  const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const [releaseIsSuccess, setReleaseIsSuccess] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
 
@@ -54,25 +57,23 @@ function PokemonDetail() {
     }
   }, [name, dispatch]);
 
-  // useEffect(() => {
-  //   const newData = JSON.parse(localStorage.getItem("favorites"));
-  //   setMyPokemonList(newData);
-  // }, [showAlert]);
-
   useEffect(() => {
-    const pokemonExist = myPokemonList?.filter(
+    const myCollections = JSON.parse(localStorage.getItem("favorites")) || [];
+
+    const pokemonByName = myCollections?.filter(
       (pokemon) => pokemon.name === name
     )[0];
 
-    setNickname(pokemonExist?.nickname);
+    setPokemonExist(pokemonByName);
+    setNickname(pokemonByName?.nickname);
 
-    if (pokemonExist?.isCaught) {
+    if (pokemonByName?.isCaught) {
       setIsCaught(true);
     } else {
       setIsCaught(false);
-      setLastAttempt(pokemonExist?.last_attempt);
+      setLastAttempt(pokemonByName?.last_attempt);
     }
-  }, [name, myPokemonList]);
+  }, [name, myPokemonList, catchIsSuccess, releaseIsSuccess]);
 
   useEffect(() => {
     if (renamedPokemon && renameCount) {
@@ -92,38 +93,26 @@ function PokemonDetail() {
     }
   }, [renamedPokemon, renameCount, myPokemonList, name]);
 
-  // useEffect(() => {
-  //   if (releaseNumber) {
-  //     if (isPrime(releaseNumber)) {
-  //       const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-  //       const updatedFavorites = favorites.filter(
-  //         (pokemon) => pokemon.name !== name
-  //       );
+  useEffect(() => {
+    if (releaseResponse?.isPrime) {
+      const updatedFavorites = myPokemonList?.filter(
+        (pokemon) => pokemon.name !== name
+      );
 
-  //       localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
-  //     }
-  //   }
-  // }, [releaseNumber, name]);
+      localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+    }
+  }, [releaseResponse, name, myPokemonList]);
 
   useEffect(() => {
-    if (showAlert) {
-      const timer = setTimeout(() => {
-        setShowAlert(false);
-      }, 3000);
-
-      return () => clearTimeout(timer);
+    if (releaseIsSuccess) {
+      setNickname("");
+      setIsCaught(false);
     }
-  }, [showAlert]);
+  }, [releaseIsSuccess]);
 
-  useEffect(() => {
-    if (showErrorAlert) {
-      const timer = setTimeout(() => {
-        setShowErrorAlert(false);
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [showErrorAlert]);
+  useAutoDismissAlert(showAlert, setShowAlert);
+  useAutoDismissAlert(catchIsSuccess !== null, setCatchIsSuccess, null);
+  useAutoDismissAlert(releaseIsSuccess !== null, setReleaseIsSuccess, null);
 
   const updateMyPokemonList = (updatedList) => {
     setMyPokemonList(updatedList);
@@ -210,19 +199,17 @@ function PokemonDetail() {
           </div>
 
           {/* Show Modal after Catch is success */}
-          {catchIsSuccess && (
-            <ModalForm
-              title={`Give ${pokemonName} a Nickname`}
-              showModal={showModal}
-              setShowModal={setShowModal}
-            >
-              <NicknameForm
-                nickname={nicknameForm}
-                setNickname={setNicknameForm}
-                onSubmit={(e) => handleAddNickname(e, name)}
-              />
-            </ModalForm>
-          )}
+          <ModalForm
+            title={`Give ${pokemonName} a Nickname`}
+            showModal={showModal}
+            setShowModal={setShowModal}
+          >
+            <NicknameForm
+              nickname={nicknameForm}
+              setNickname={setNicknameForm}
+              onSubmit={(e) => handleAddNickname(e, name)}
+            />
+          </ModalForm>
 
           {/* Show These butons when the pokemon has a nickname */}
           {nickname && (
@@ -257,10 +244,14 @@ function PokemonDetail() {
               </ModalForm>
               <button
                 onClick={() => {
-                  dispatch(releasePokemon(name));
+                  dispatch(releasePokemon(setReleaseIsSuccess));
                 }}
-                disabled={loading}
-                className="bg-red-500 hover:bg-red-600 text-white w-40 font-bold capitalize rounded-md shadow-lg py-1"
+                disabled={loading || releaseIsSuccess !== null}
+                className={`${
+                  loading || releaseIsSuccess !== null
+                    ? "opacity-60"
+                    : "opacity-100"
+                } bg-red-500 hover:bg-red-600 text-white w-40 font-bold capitalize rounded-md shadow-lg py-1`}
               >
                 Release
               </button>
@@ -282,7 +273,7 @@ function PokemonDetail() {
 
             {!isCaught ? (
               <div className="w-full flex justify-center md:justify-end items-center md:space-x-5">
-                {showAlert && (
+                {showAlert ? (
                   <AlertNotification
                     text={
                       success
@@ -291,16 +282,17 @@ function PokemonDetail() {
                     }
                     variant={success ? VARIANT.Success : VARIANT.Failed}
                   />
+                ) : (
+                  pokemonExist &&
+                  timeRemaining && (
+                    <AlertNotification
+                      text={timeRemaining}
+                      variant={VARIANT.Warning}
+                    />
+                  )
                 )}
 
-                {catchIsSuccess === false && (
-                  <AlertNotification
-                    text={timeRemaining}
-                    variant={VARIANT.Warning}
-                  />
-                )}
-
-                {catchIsSuccess === null && (
+                {!pokemonExist && (
                   <button
                     onClick={() => {
                       dispatch(
@@ -322,18 +314,20 @@ function PokemonDetail() {
                 )}
               </div>
             ) : (
-              <>
-                <AlertNotification
-                  text="You have already caught this Pokemon"
-                  variant={VARIANT.Info}
-                />
-                {/* {showErrorAlert && (
-                  <AlertNotification
-                    text={`${name} failed to be released`}
-                    variant={VARIANT.Failed}
-                  />
-                )} */}
-              </>
+              <AlertNotification
+                text="You have already caught this Pokemon"
+                variant={VARIANT.Info}
+              />
+            )}
+            {releaseIsSuccess !== null && (
+              <AlertNotification
+                text={
+                  releaseIsSuccess
+                    ? `${name} release successful`
+                    : `${name} failed to be released`
+                }
+                variant={releaseIsSuccess ? VARIANT.Success : VARIANT.Failed}
+              />
             )}
           </div>
         </div>

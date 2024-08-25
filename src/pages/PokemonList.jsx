@@ -32,8 +32,6 @@ function PokemonList() {
   );
   const status = useSelector((state) => state.pokemonList.status);
 
-  console.log(pokemonList);
-
   const pokemonTypes = useSelector((state) => state.pokemonTypes.pokemonTypes);
   const pokemonListType = useSelector(
     (state) => state.pokemonListType.pokemonList

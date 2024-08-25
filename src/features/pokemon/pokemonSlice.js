@@ -39,18 +39,23 @@ export const catchPokemon = createAsyncThunk(
   }
 );
 
-export const releasePokemon = createAsyncThunk("pokemon/release", async () => {
-  const response = await axios.post(`${API_URL}/pokemon/release`);
-  const data = response.data.data;
-  const number = data.number;
+export const releasePokemon = createAsyncThunk(
+  "pokemon/release",
+  async (setIsSuccess) => {
+    const response = await axios.post(`${API_URL}/pokemon/release`);
+    const data = response.data.data;
+    const number = data.number;
 
-  const primeNumber = isPrime(number);
+    const primeNumber = isPrime(number);
 
-  return {
-    number,
-    isPrime: primeNumber,
-  };
-});
+    primeNumber ? setIsSuccess(true) : setIsSuccess(false);
+
+    return {
+      number,
+      isPrime: primeNumber,
+    };
+  }
+);
 
 export const renamePokemon = createAsyncThunk(
   "pokemon/rename",
