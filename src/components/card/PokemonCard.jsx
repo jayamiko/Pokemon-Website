@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Image from "../image/Image";
-import TypeLabel from "../label/TypeLabel";
+import TypeLabel from "../button/ButtonType";
+import ButtonType from "../button/ButtonType";
 
 function PokemonCard({ item }) {
   const pokemonName = item?.name;
@@ -34,9 +35,9 @@ function PokemonCard({ item }) {
           </label>
           {pokemoneNickname && <i>{pokemoneNickname}</i>}
 
-          <div className="space-x-1">
+          <div className="flex space-x-1">
             {pokemonTypes.map((type, i) => {
-              return <TypeLabel key={i} typeName={type} />;
+              return <ButtonType key={i} typeName={type} disabled={true} />;
             })}
           </div>
         </div>
