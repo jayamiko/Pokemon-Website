@@ -15,9 +15,9 @@ import ModalForm from "../components/modal/ModalForm";
 import NicknameForm from "../components/form/NicknameForm";
 import AlertNotification from "../components/alert/AlertNotification";
 import Image from "../components/image/Image";
-import ButtonType from "../components/button/ButtonType";
 import useAutoDismissAlert from "../hook/useAutoDismissAlert";
 import Button from "../components/button/Button";
+import BoardInfo from "../components/card/BoardInfo";
 
 function PokemonDetail() {
   const { name } = useParams();
@@ -45,8 +45,9 @@ function PokemonDetail() {
   const [showModal, setShowModal] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
 
-  const { success, renamedPokemon, renameCount, releaseResponse, loading } =
-    useSelector((state) => state.pokemon);
+  const { renamedPokemon, renameCount, releaseResponse, loading } = useSelector(
+    (state) => state.pokemon
+  );
 
   useEffect(() => {
     if (name) {
@@ -115,6 +116,28 @@ function PokemonDetail() {
     localStorage.setItem("favorites", JSON.stringify(updatedList));
   };
 
+  const handleCatchPokemon = () => {
+    dispatch(
+      catchPokemon({
+        pokemonDetail,
+        setCatchIsSuccess,
+        setShowModal,
+      })
+    );
+    setShowAlert(true);
+  };
+
+  const handleRenamePokemon = (e) => {
+    e.preventDefault();
+    dispatch(
+      renamePokemon({
+        pokemonName: name,
+        newName: nicknameForm,
+      })
+    );
+    setShowRenameModal(false);
+  };
+
   const handleAddNickname = (e, name) => {
     e.preventDefault();
     if (!nicknameForm) return;
@@ -154,27 +177,7 @@ function PokemonDetail() {
           />
         </div>
         <div className="w-full lg:w-3/5 lg:ml-10">
-          <div className="w-full flex flex-col">
-            <div className="flex justify-center sm:justify-start items-end">
-              <h1 className="uppercase font-bold text-xl sm:text-2xl md:text-3xl xl:text-5xl text-sky-700">
-                {name}
-              </h1>
-              <span className="text-base sm:text-lg lg:text-xl italic ml-2 lowercase">
-                {nickname && `(nickname: ${nickname})`}
-              </span>
-            </div>
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <div className="w-fit flex space-x-2 items-center">
-                {pokemonDetail?.types?.map((type, i) => {
-                  return <ButtonType key={i} typeName={type} disabled={true} />;
-                })}
-              </div>
-              <div className="space-x-4 text-xs sm:text-sm md:text-base">
-                <span>height: {pokemonDetail.height}cm</span>
-                <span>Weight: {pokemonDetail.weight}kg</span>
-              </div>
-            </div>
-          </div>
+          <BoardInfo item={pokemonDetail} nickname={nickname} />
 
           {/* Show Modal after Catch is success */}
           <ModalForm
@@ -208,16 +211,7 @@ function PokemonDetail() {
                 <NicknameForm
                   nickname={nicknameForm}
                   setNickname={setNicknameForm}
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    dispatch(
-                      renamePokemon({
-                        pokemonName: name,
-                        newName: nicknameForm,
-                      })
-                    );
-                    setShowRenameModal(false);
-                  }}
+                  onSubmit={handleRenamePokemon}
                 />
               </ModalForm>
               <Button
@@ -257,26 +251,17 @@ function PokemonDetail() {
               {showAlert && (
                 <AlertNotification
                   text={
-                    success
+                    catchIsSuccess
                       ? `${pokemonName} has been successfully caught`
                       : `Pokemon failed to catch, try another time`
                   }
-                  variant={success ? VARIANT.Success : VARIANT.Failed}
+                  variant={catchIsSuccess ? VARIANT.Success : VARIANT.Failed}
                 />
               )}
 
               {!pokemonExist && (
                 <button
-                  onClick={() => {
-                    dispatch(
-                      catchPokemon({
-                        pokemonDetail,
-                        setCatchIsSuccess,
-                        setShowModal,
-                      })
-                    );
-                    setShowAlert(true);
-                  }}
+                  onClick={handleCatchPokemon}
                   disabled={loading || showAlert}
                   className={`${
                     loading || showAlert ? "opacity-60" : "opacity-100"

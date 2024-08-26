@@ -14,7 +14,7 @@ export const catchPokemon = createAsyncThunk(
 
     if (isSuccess) {
       setShowModal(true); // show modal for filled nickname
-      const responseData = {
+      return {
         success: true,
         pokemon: {
           ...pokemonDetail,
@@ -23,18 +23,14 @@ export const catchPokemon = createAsyncThunk(
           rename_count: 0,
         },
       };
-      return responseData;
     } else {
-      const responseData = {
+      return {
         success: false,
         pokemon: {
-          id: pokemonDetail.id,
+          nickname: "",
           isCaught: false,
-          name: pokemonDetail.name,
-          last_attempt: new Date(),
         },
       };
-      return responseData;
     }
   }
 );
@@ -48,7 +44,7 @@ export const releasePokemon = createAsyncThunk(
 
     const primeNumber = isPrime(number);
 
-    primeNumber ? setIsSuccess(true) : setIsSuccess(false);
+    setIsSuccess(primeNumber ? true : false);
 
     return {
       number,
@@ -109,10 +105,12 @@ const pokemonSlice = createSlice({
       state.loading = false;
       state.success = action.payload.success;
 
-      const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+      if (action.payload.success) {
+        const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 
-      favorites.push(action.payload.pokemon);
-      localStorage.setItem("favorites", JSON.stringify(favorites));
+        favorites.push(action.payload.pokemon);
+        localStorage.setItem("favorites", JSON.stringify(favorites));
+      }
     });
     builder.addCase(catchPokemon.rejected, (state, action) => {
       state.loading = false;
