@@ -16,8 +16,8 @@ import NicknameForm from "../components/form/NicknameForm";
 import AlertNotification from "../components/alert/AlertNotification";
 import Image from "../components/image/Image";
 import ButtonType from "../components/button/ButtonType";
-import calculateCountdown from "../service/countdown";
 import useAutoDismissAlert from "../hook/useAutoDismissAlert";
+import Button from "../components/button/Button";
 
 function PokemonDetail() {
   const { name } = useParams();
@@ -34,9 +34,6 @@ function PokemonDetail() {
   );
 
   const [pokemonExist, setPokemonExist] = useState({});
-
-  const [lastAttempt, setLastAttempt] = useState(null); // session date if failed to caught
-  const [timeRemaining, setTimeRemaining] = useState("");
 
   const [nickname, setNickname] = useState("");
   const [nicknameForm, setNicknameForm] = useState("");
@@ -71,7 +68,6 @@ function PokemonDetail() {
       setIsCaught(true);
     } else {
       setIsCaught(false);
-      setLastAttempt(pokemonByName?.last_attempt);
     }
   }, [name, myPokemonList, catchIsSuccess, releaseIsSuccess]);
 
@@ -144,25 +140,7 @@ function PokemonDetail() {
 
   const pokemonName = pokemonDetail?.name;
 
-  useEffect(() => {
-    if (lastAttempt) {
-      const lastAttemptDate = new Date(lastAttempt);
-
-      const interval = setInterval(() => {
-        const { hours, minutes, seconds } = calculateCountdown(lastAttemptDate);
-
-        if (hours === 0 && minutes === 0 && seconds === 0) {
-          clearInterval(interval);
-        } else {
-          const message = `You can catch this pokemon again in ${hours} hours ${minutes} minutes ${seconds} seconds`;
-
-          setTimeRemaining(message);
-        }
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }
-  }, [lastAttempt]);
+  console.log(pokemonExist);
 
   return (
     <section className="container mx-auto px-3 md:px-5">
@@ -212,16 +190,16 @@ function PokemonDetail() {
           </ModalForm>
 
           {/* Show These butons when the pokemon has a nickname */}
-          {nickname && (
+          {nickname && !showModal && (
             <div className="flex items-center space-x-4 mt-3">
-              <button
+              <Button
                 onClick={() => {
                   setShowRenameModal(true);
                 }}
-                className="bg-orange-500 hover:bg-orange-600 text-white w-40 font-bold capitalize rounded-md shadow-lg py-1"
+                classNames="bg-orange-500 hover:bg-orange-600"
               >
                 Rename
-              </button>
+              </Button>
               <ModalForm
                 title="Rename Nickname"
                 showModal={showRenameModal}
@@ -242,19 +220,19 @@ function PokemonDetail() {
                   }}
                 />
               </ModalForm>
-              <button
+              <Button
                 onClick={() => {
                   dispatch(releasePokemon(setReleaseIsSuccess));
                 }}
-                disabled={loading || releaseIsSuccess !== null}
-                className={`${
+                classNames={`${
                   loading || releaseIsSuccess !== null
                     ? "opacity-60"
                     : "opacity-100"
-                } bg-red-500 hover:bg-red-600 text-white w-40 font-bold capitalize rounded-md shadow-lg py-1`}
+                } bg-red-500 hover:bg-red-600`}
+                disabled={releaseIsSuccess !== null || loading}
               >
                 Release
-              </button>
+              </Button>
             </div>
           )}
 
@@ -271,54 +249,51 @@ function PokemonDetail() {
               );
             })}
 
-            {!isCaught ? (
-              <div className="w-full flex justify-center md:justify-end items-center md:space-x-5">
-                {showAlert ? (
-                  <AlertNotification
-                    text={
-                      success
-                        ? `${pokemonName} has been successfully caught`
-                        : `Pokemon failed to catch, try another time`
-                    }
-                    variant={success ? VARIANT.Success : VARIANT.Failed}
-                  />
-                ) : (
-                  pokemonExist &&
-                  timeRemaining && (
-                    <AlertNotification
-                      text={timeRemaining}
-                      variant={VARIANT.Warning}
-                    />
-                  )
-                )}
+            <div
+              className={`w-full flex ${
+                showAlert ? "justify-between" : "justify-center md:justify-end"
+              } items-center md:space-x-5`}
+            >
+              {showAlert && (
+                <AlertNotification
+                  text={
+                    success
+                      ? `${pokemonName} has been successfully caught`
+                      : `Pokemon failed to catch, try another time`
+                  }
+                  variant={success ? VARIANT.Success : VARIANT.Failed}
+                />
+              )}
 
-                {!pokemonExist && (
-                  <button
-                    onClick={() => {
-                      dispatch(
-                        catchPokemon({
-                          pokemonDetail,
-                          setCatchIsSuccess,
-                          setShowModal,
-                        })
-                      );
-                      setShowAlert(true);
-                    }}
-                    disabled={loading || showAlert}
-                    className={`${
-                      loading || showAlert ? "opacity-60" : "opacity-100"
-                    } bg-sky-600 border-2 hover:bg-sky-700 text-white w-full md:w-48 lg:w-52 font-bold capitalize rounded-lg shadow-lg py-2`}
-                  >
-                    CATCH
-                  </button>
-                )}
-              </div>
-            ) : (
+              {!pokemonExist && (
+                <button
+                  onClick={() => {
+                    dispatch(
+                      catchPokemon({
+                        pokemonDetail,
+                        setCatchIsSuccess,
+                        setShowModal,
+                      })
+                    );
+                    setShowAlert(true);
+                  }}
+                  disabled={loading || showAlert}
+                  className={`${
+                    loading || showAlert ? "opacity-60" : "opacity-100"
+                  } bg-sky-600 border-2 hover:bg-sky-700 text-white w-full md:w-48 lg:w-52 font-bold capitalize rounded-lg shadow-lg py-2`}
+                >
+                  CATCH
+                </button>
+              )}
+            </div>
+
+            {!showModal && isCaught && (
               <AlertNotification
                 text="You have already caught this Pokemon"
                 variant={VARIANT.Info}
               />
             )}
+
             {releaseIsSuccess !== null && (
               <AlertNotification
                 text={

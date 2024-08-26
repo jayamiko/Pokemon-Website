@@ -42,22 +42,22 @@ export const colors = [
 
 const MEDIA_SOSIAL = {
   Linkedin: {
-    link: "https://google.com/",
+    link: "https://www.linkedin.com/in/jayamiko",
     color: "#0a66c2",
     icon: <FaLinkedinIn size={28} />,
   },
   Instagram: {
-    link: "https://google.com/",
+    link: "https://www.instagram.com/_mjaya10/",
     color: "#C13584",
     icon: <FaInstagram size={28} />,
   },
   Facebook: {
-    link: "https://google.com/",
+    link: "https://web.facebook.com/",
     color: "#4267B2",
     icon: <FaFacebook size={28} />,
   },
   Github: {
-    link: "https://google.com/",
+    link: "https://github.com/jayamiko",
     color: "#2b3137",
     icon: <FaGithub size={28} />,
   },
