@@ -54,6 +54,15 @@ function PokemonList() {
   const activeTypeId = activeType.id;
   const activeTypeName = activeType.name;
 
+  function handleChangeType(type, index) {
+    setCurrentPage(1);
+    setOffset(0);
+    setActiveType({
+      id: index + 1,
+      name: type.name,
+    });
+  }
+
   useEffect(() => {
     if (activeTypeId) {
       dispatch(fetchPokemonListType({ activeTypeId, offset }));
@@ -69,7 +78,15 @@ function PokemonList() {
   }, [pokemonList, activeTypeId, pokemonListType]);
 
   async function onSearch(query) {
-    searchPokemon(query, dispatch, setData, setError);
+    if (query) {
+      searchPokemon(query, dispatch, setData, setError);
+    } else {
+      if (activeTypeId && pokemonListType) {
+        setData(pokemonListType);
+      } else {
+        setData(pokemonList);
+      }
+    }
   }
 
   return (
@@ -95,12 +112,7 @@ function PokemonList() {
                 <ButtonType
                   key={index}
                   typeName={type.name}
-                  onClick={() =>
-                    setActiveType({
-                      id: index + 1,
-                      name: type.name,
-                    })
-                  }
+                  onClick={() => handleChangeType(type, index)}
                 />
               );
             })}

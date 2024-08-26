@@ -92,16 +92,20 @@ function PokemonDetail() {
 
   useEffect(() => {
     if (releaseResponse?.isPrime) {
+      const myPokemonList = JSON.parse(localStorage.getItem("favorites"));
       const updatedFavorites = myPokemonList?.filter(
         (pokemon) => pokemon.name !== name
       );
 
+      console.log(JSON.stringify(updatedFavorites));
+
       localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
     }
-  }, [releaseResponse, name, myPokemonList]);
+  }, [releaseResponse, name]);
 
   useEffect(() => {
     if (releaseIsSuccess) {
+      setNicknameForm("");
       setNickname("");
       setIsCaught(false);
     }
@@ -110,11 +114,6 @@ function PokemonDetail() {
   useAutoDismissAlert(showAlert, setShowAlert);
   useAutoDismissAlert(catchIsSuccess !== null, setCatchIsSuccess, null);
   useAutoDismissAlert(releaseIsSuccess !== null, setReleaseIsSuccess, null);
-
-  const updateMyPokemonList = (updatedList) => {
-    setMyPokemonList(updatedList);
-    localStorage.setItem("favorites", JSON.stringify(updatedList));
-  };
 
   const handleCatchPokemon = () => {
     dispatch(
@@ -145,25 +144,27 @@ function PokemonDetail() {
     const currentFavorites =
       JSON.parse(localStorage.getItem("favorites")) || [];
 
-    const updatedFavorites = currentFavorites?.map((pokemon) => {
-      if (pokemon.name === name) {
-        return {
-          ...pokemon,
-          nickname: nicknameForm,
-        };
-      }
-      return pokemon;
-    });
-
-    updateMyPokemonList(updatedFavorites);
+    console.log(pokemonExist);
+    console.log(currentFavorites?.length > 0);
+    if (currentFavorites?.length > 0) {
+      const updatedFavorites = currentFavorites?.map((pokemon) => {
+        if (pokemon.name === name) {
+          return {
+            ...pokemon,
+            nickname: nicknameForm,
+          };
+        }
+        return pokemon;
+      });
+      localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+      setMyPokemonList(updatedFavorites);
+    }
 
     setNicknameForm("");
     setShowModal(false);
   };
 
   const pokemonName = pokemonDetail?.name;
-
-  console.log(pokemonExist);
 
   return (
     <section className="container mx-auto px-3 md:px-5">
