@@ -1,9 +1,11 @@
 import { getPokemonDetail } from "../features/pokemon/pokemonDetailSlice";
 import { fetchPokemonList } from "../features/pokemon/pokemonListSlice";
+import lowercase from "../helpers/lowerCase";
 
 export async function searchPokemon(query, dispatch, setData, setError) {
   try {
-    const action = query ? getPokemonDetail(query) : fetchPokemonList();
+    const queryFormat = lowercase(query);
+    const action = query ? getPokemonDetail(queryFormat) : fetchPokemonList();
     const result = await dispatch(action);
     const payload = result?.payload;
 

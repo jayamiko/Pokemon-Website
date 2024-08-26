@@ -36,6 +36,8 @@ function PokemonList() {
   const pokemonListType = useSelector(
     (state) => state.pokemonListType.pokemonList
   );
+  const filterCount = useSelector((state) => state.pokemonListType.count);
+
   const filterStatus = useSelector((state) => state.pokemonListType.status);
 
   const isLoading =
@@ -142,9 +144,18 @@ function PokemonList() {
 
       {/* PAGINATION */}
       <div className="flex justify-end items-center">
-        {count && data?.length && (
+        {!activeType && count && data?.length && (
           <PaginationList
             count={count}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            setOffset={setOffset}
+          />
+        )}
+
+        {activeType && filterCount && data?.length && (
+          <PaginationList
+            count={filterCount}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             setOffset={setOffset}

@@ -37,6 +37,7 @@ export const fetchPokemonListType = createAsyncThunk(
     const pokemonSlices = pokemonData.slice(offset, offset + LIMIT_PAGINATION);
 
     return {
+      count: pokemonData.length,
       pokemonList: sortRandomData(pokemonSlices),
     };
   }
@@ -45,6 +46,7 @@ export const fetchPokemonListType = createAsyncThunk(
 const pokemonListTypeSlice = createSlice({
   name: "pokemonListType",
   initialState: {
+    count: 0,
     pokemonList: [],
     status: STATUS.Idle,
     error: null,
@@ -58,6 +60,7 @@ const pokemonListTypeSlice = createSlice({
       .addCase(fetchPokemonListType.fulfilled, (state, action) => {
         state.status = STATUS.Succeded;
         state.pokemonList = action.payload.pokemonList;
+        state.count = action.payload.count;
       })
       .addCase(fetchPokemonListType.rejected, (state, action) => {
         state.status = STATUS.Failed;
