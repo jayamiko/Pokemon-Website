@@ -244,7 +244,7 @@ function PokemonDetail() {
             })}
 
             <div
-              className={`w-full flex ${
+              className={`w-full flex flex-col-reverse sm:flex-row ${
                 showAlert ? "justify-between" : "justify-center md:justify-end"
               } items-center md:space-x-5`}
             >

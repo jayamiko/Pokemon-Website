@@ -17,7 +17,7 @@ function MyPokemonList() {
   const caughtList = data?.filter((pokemon) => pokemon.isCaught === true);
 
   return (
-    <section className="container mx-auto py-5 min-h-screen">
+    <section className="container mx-auto py-2 lg:py-5 min-h-screen">
       <TypographyTitle title="My Pokemon List" />
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
         {caughtList.map((item, i) => {

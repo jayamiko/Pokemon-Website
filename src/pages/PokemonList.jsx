@@ -89,7 +89,7 @@ function PokemonList() {
           <h2 className="capitalize text-center font-semibold text-sky-700 text-sm">
             Filter by Type:
           </h2>
-          <div className="w-full gap-2 grid grid-cols-9 mt-2">
+          <div className="w-full gap-2 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-9 mt-2">
             {pokemonTypes.map((type, index) => {
               return (
                 <ButtonType
